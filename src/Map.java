@@ -1,5 +1,5 @@
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * This class represents a 2D map (int[w][h]) as a "screen" or a raster matrix or maze over integers.
@@ -207,10 +207,11 @@ public class Map implements Map2D, Serializable{
 	 * Fills this map with the new color (new_v) starting from p.
 	 * https://en.wikipedia.org/wiki/Flood_fill
 	 */
-	public int fill(Pixel2D xy, int new_v,  boolean cyclic) {
-		int ans = -1;
-
-		return ans;
+	public int fill(Pixel2D xy, int new_v,boolean cyclic)
+    {
+		if(this.getPixel(xy)==new_v)return 1;
+        directions(xy.getX(), xy.getY(),new_v,this.getPixel(xy),cyclic);
+        return 1;
 	}
 
 	@Override
@@ -218,10 +219,78 @@ public class Map implements Map2D, Serializable{
 	 * BFS like shortest the computation based on iterative raster implementation of BFS, see:
 	 * https://en.wikipedia.org/wiki/Breadth-first_search
 	 */
-	public Pixel2D[] shortestPath(Pixel2D p1, Pixel2D p2, int obsColor, boolean cyclic) {
-		Pixel2D[] ans = null;  // the result.
+	public Pixel2D[] shortestPath(Pixel2D p1, Pixel2D p2, int obsColor, boolean cyclic)
+    {
+        int w = this._map[0].length;
+        int h = this._map.length;
 
-		return ans;
+        int sx = p1.getX(), sy = p1.getY();
+        int tx = p2.getX(), ty = p2.getY();
+
+        // bounds check
+        if (sx < 0 || sy < 0 || sx >= w || sy >= h ||
+                tx < 0 || ty < 0 || tx >= w || ty >= h) {
+            return null;
+        }
+
+        // obstacle check
+        if (this._map[sy][sx] == obsColor || this._map[ty][tx] == obsColor) {
+            return null;
+        }
+
+        boolean[][] visited = new boolean[h][w];
+        Pixel2D[][] parent = new Pixel2D[h][w];
+
+        Queue<Pixel2D> q = new LinkedList<>();
+        q.add(p1);
+        visited[sy][sx] = true;
+
+        int[] dx = {1, -1, 0, 0};
+        int[] dy = {0, 0, 1, -1};
+
+        while (!q.isEmpty()) {
+            Pixel2D p = q.poll();
+            int x = p.getX();
+            int y = p.getY();
+
+            if (x == tx && y == ty) break;
+
+            for (int i = 0; i < 4; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+
+                if (cyclic) {
+                    nx = (nx + w) % w;
+                    ny = (ny + h) % h;
+                }
+
+                if (nx >= 0 && ny >= 0 && nx < w && ny < h &&
+                        !visited[ny][nx] &&
+                        this._map[ny][nx] != obsColor) {
+
+                    visited[ny][nx] = true;
+                    parent[ny][nx] = p;
+                    q.add(new Index2D(nx, ny));
+                }
+            }
+        }
+
+        // no path
+        if (!visited[ty][tx]) {
+            return null;
+        }
+
+        // reconstruct path
+        List<Pixel2D> path = new ArrayList<>();
+        Pixel2D curr = p2;
+
+        while (curr != null) {
+            path.add(curr);
+            curr = parent[curr.getY()][curr.getX()];
+        }
+
+        Collections.reverse(path);
+        return path.toArray(new Pixel2D[0]);
 	}
     @Override
     public Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) {
@@ -230,5 +299,25 @@ public class Map implements Map2D, Serializable{
         return ans;
     }
 	////////////////////// Private Methods ///////////////////////
+    public void directions(int x , int y,int old_v,int new_v,boolean cyclic)
+    {if(cyclic)
+    {if(x==_map[0].length)x=0;
+        if(y==_map.length)y=0;
+        if(x<0)x= _map[0].length-1;
+        if(y<0)y=_map.length-1;
+    }
+        if(isInside(new Index2D(x,y)) || this._map[y][x]!=old_v){return;}
+        this._map[y][x]=new_v;
+        directions(x+1,y,old_v,new_v,cyclic);
+        directions(x,y+1,old_v,new_v,cyclic);
+        directions(x,y-1,old_v,new_v,cyclic);
+        directions(x-1,y,old_v,new_v,cyclic);
 
-}
+    }
+
+
+
+
+    }
+
+
