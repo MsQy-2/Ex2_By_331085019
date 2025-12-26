@@ -20,7 +20,12 @@ public interface Map2D {
      * @param h the height of the underlying 2D array.
      * @param v the init value of all the entries in the 2D array.
      */
+
     public void init(int w, int h, int v);
+
+
+
+
     /**
      * Constructs a new 2D raster map from a given 2D int array (deep copy).
      * @throws RuntimeException if arr == null or if the array is empty or a ragged 2D array.
@@ -28,11 +33,13 @@ public interface Map2D {
      */
     public void init(int[][] arr);
 
+
     /**
      * Computes a deep copy of the underline 2D matrix.
      * @return a deep copy of the underline matrix.
      */
     public int[][] getMap();
+
 
     /**
      * @return the width of this 2D map (first coordinate).
