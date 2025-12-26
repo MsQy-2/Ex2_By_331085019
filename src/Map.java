@@ -223,17 +223,13 @@ public class Map implements Map2D, Serializable{
     {
         int w = this._map[0].length;
         int h = this._map.length;
-
         int sx = p1.getX(), sy = p1.getY();
         int tx = p2.getX(), ty = p2.getY();
 
-        // bounds check
         if (sx < 0 || sy < 0 || sx >= w || sy >= h ||
                 tx < 0 || ty < 0 || tx >= w || ty >= h) {
             return null;
         }
-
-        // obstacle check
         if (this._map[sy][sx] == obsColor || this._map[ty][tx] == obsColor) {
             return null;
         }
@@ -294,9 +290,32 @@ public class Map implements Map2D, Serializable{
 	}
     @Override
     public Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) {
-        Map2D ans = null;  // the result.
+        int w = getWidth();
+        int h = getHeight();
 
-        return ans;
+        int[][] dist = new int[h][w];
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+
+                // obstacle
+                if (this._map[y][x] == obsColor) {
+                    dist[y][x] = -1;
+                    continue;
+                }
+
+                Index2D target = new Index2D(x, y);
+                Pixel2D[] path = shortestPath(start, target, obsColor, cyclic);
+
+                if (path == null) {
+                    dist[y][x] = -1;
+                } else {
+                    dist[y][x] = path.length - 1;
+                }
+            }
+        }
+
+        return new Map(dist);
     }
 	////////////////////// Private Methods ///////////////////////
     public void directions(int x , int y,int old_v,int new_v,boolean cyclic)
