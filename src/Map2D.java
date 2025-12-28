@@ -21,6 +21,7 @@ public interface Map2D {
      * @param v the init value of all the entries in the 2D array.
      */
 
+
     public void init(int w, int h, int v);
 
 

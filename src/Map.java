@@ -21,12 +21,7 @@ public class Map implements Map2D, Serializable{
 	 */
 	public Map(int w, int h, int v)
     {init(w, h, v);
-    int[][] map = new int[h][w];
-    for (int x = 0; x < w; x++)
-    {
-        Arrays.fill(map[x],v);
-    }
-    this._map = map;
+
     }
 
 	/**
@@ -47,22 +42,27 @@ public class Map implements Map2D, Serializable{
 	public Map(int[][] data)
     {
         init(data);
-        int length = data[0].length;
-        for (int x = 0; x < data.length; x++)
-        {
-           if(data[x].length != length)
-           {throw new RuntimeException("not valid map");}
-        }
-        if(data==null ){throw new RuntimeException("not valid map");}
-        this._map = data;
+
 	}
 	@Override
 	public void init(int w, int h, int v) {
-
+        int[][] map = new int[h][w];
+        for (int x = 0; x < w; x++)
+        {
+            Arrays.fill(map[x],v);
+        }
+        this._map = map;
 	}
 	@Override
-	public void init(int[][] arr) {
-
+	public void init(int[][] data) {
+        int length = data[0].length;
+        for (int x = 0; x < data.length; x++)
+        {
+            if(data[x].length != length)
+            {throw new RuntimeException("not valid map");}
+        }
+        if(data==null ){throw new RuntimeException("not valid map");}
+        this._map = data;
 	}
 	@Override
 	public int[][] getMap() {
@@ -210,7 +210,7 @@ public class Map implements Map2D, Serializable{
 	public int fill(Pixel2D xy, int new_v,boolean cyclic)
     {
 		if(this.getPixel(xy)==new_v)return 1;
-        directions(xy.getX(), xy.getY(),new_v,this.getPixel(xy),cyclic);
+        directions(xy.getX(), xy.getY(),this.getPixel(xy),new_v,cyclic);
         return 1;
 	}
 
@@ -325,7 +325,7 @@ public class Map implements Map2D, Serializable{
         if(x<0)x= _map[0].length-1;
         if(y<0)y=_map.length-1;
     }
-        if(isInside(new Index2D(x,y)) || this._map[y][x]!=old_v){return;}
+        if(x==_map[0].length || y==_map.length||y== -1 || x==-1 || this._map[y][x]!=old_v){return;}
         this._map[y][x]=new_v;
         directions(x+1,y,old_v,new_v,cyclic);
         directions(x,y+1,old_v,new_v,cyclic);

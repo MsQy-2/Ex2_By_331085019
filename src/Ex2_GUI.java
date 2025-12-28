@@ -21,10 +21,10 @@ public class Ex2_GUI {
             for (int x = 0; x < map.getWidth(); x++)
             {
 
-                StdDraw.square(1-x*0.2,1-y*0.2,0.2);
-                if(map.getPixel(x,y) == '1')
+                StdDraw.square(1-x*0.2-0.1,1-y*0.2-0.1,0.1);
+                if(map.getPixel(x,y) == 1)
                 {
-                    StdDraw.filledSquare(1-x*0.2,1-y*0.2,0.2);
+                    StdDraw.filledSquare(1-x*0.2-0.1,1-y*0.2-0.1,0.1);
                 }
 
 
@@ -54,7 +54,7 @@ public class Ex2_GUI {
 
                 for(int j=0;j<x;j++)
                 {
-                  ans.setPixel(j,i,line.charAt(j*2));
+                  ans.setPixel(j,i,Character.getNumericValue(line.charAt(j*2)));
 
                 }
                 i++;
